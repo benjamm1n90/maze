@@ -1,5 +1,5 @@
 import math
-
+             
 class Maze:
     
     def __init__(self, x1, y1, x2, y2):
@@ -7,32 +7,66 @@ class Maze:
         self.y1 = y1
         self.x2 = x2
         self.y2 = y2
-        self.path = [[]]
         self.uniquePath = ""
-        self.move(x1, y1, x2, y2)
+        self.count = 0
+        self.visited = {}
+        self.paths = []
+        self.move(x1, y1, x2, y2, self.uniquePath)
     
     def __str__(self):
-        return f"Path: {self.path}"
+        result = ""
+        for item in reversed(self.paths):
+            result += f"{item}\n"
+        result += f"Number of paths: {self.count}"
+        return result
+
+    def goEast(self, x1, y1, x2):
+        if (x1 + 1, y1) not in self.visited and x1 < x2:
+            self.visited[(x1 + 1, y1)] = True
+            return True
+        return False
         
-    def move(self, x1, y1, x2, y2):
-            i = 0
-            if(x1 < x2):
-                self.uniquePath += "E"
-                self.move(x1 + 1, y1, x2, y2)
-            elif(y1 < y2):
-                self.uniquePath += "N"
-                self.move(x1, y1 + 1, x2, y2)
-            elif(x1 > x2):
-                self.uniquePath += "W"
-                self.move(x1 - 1, y1, x2, y2)
-            elif(y1 > y2):
-                self.uniquePath += "S"
-                self.move(x1, y1 - 1, x2, y2)                                
-            else:
-                self.path[i].append(self.uniquePath)
-                i+=1
-                print(self.uniquePath)
+    def goWest(self, x1, y1, x2):
+        if (x1 - 1, y1) not in self.visited and x1 > x2:
+            self.visited[(x1 - 1, y1)] = True
+            return True
+        return False
+
+    def goNorth(self, x1, y1, y2):
+        if (x1, y1 + 1) not in self.visited and y1 < y2:
+            self.visited[(x1, y1 + 1)] = True
+            return True
+        return False
+
+    def goSouth(self, x1, y1, y2):
+        if (x1, y1 - 1) not in self.visited and y1 > y2:
+            self.visited[(x1, y1 - 1)] = True
+            return True
+        return False
+        
+    def move(self, x1, y1, x2, y2, uniquePath):
+        if (x1 == x2 and y1 == y2):
+            self.count += 1
+            self.paths.append(uniquePath)
+        
+        self.visited[(x1, y1)] = True
+        
+        if self.goEast(x1, y1, x2):
+            self.move(x1 + 1, y1, x2, y2, uniquePath + "E")
+        
+        if self.goWest(x1, y1, x2):
+            self.move(x1 - 1, y1, x2, y2, uniquePath + "W")
+        
+        if self.goNorth(x1, y1, y2):
+            self.move(x1, y1 + 1, x2, y2, uniquePath + "N")
+        
+        if self.goSouth(x1, y1, y2):
+            self.move(x1, y1 - 1, x2, y2, uniquePath + "S")
+        
+        del self.visited[(x1, y1)]
+
+
             
-            
+               
         
             
